@@ -1,9 +1,10 @@
 # depslib dependency file v1.0
-1721949512 source:c:\users\raiel\onedrive\Área de trabalho\projeto\main.c
+1721955909 source:c:\users\raiel\onedrive\Área de trabalho\projeto\main.c
 	<gtk/gtk.h>
 	<stdlib.h>
 	<stdbool.h>
 	<string.h>
+	<time.h>
 
 1715904525 c:\msys64\mingw64\include\gtk-3.0\gtk\gtk.h
 	<gdk/gdk.h>
