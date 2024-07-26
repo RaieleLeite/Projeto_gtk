@@ -397,46 +397,14 @@ ADMINISTRADOR !</property>
             <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkTreeView">
+              <object class="GtkPaned">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="model">data</property>
-                <property name="enable-grid-lines">both</property>
-                <child internal-child="selection">
-                  <object class="GtkTreeSelection"/>
+                <child>
+                  <placeholder/>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">Nome</property>
-                    <child>
-                      <object class="GtkCellRendererText"/>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">Login</property>
-                    <child>
-                      <object class="GtkCellRendererText"/>
-                      <attributes>
-                        <attribute name="text">1</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkTreeViewColumn">
-                    <property name="title" translatable="yes">Senha</property>
-                    <child>
-                      <object class="GtkCellRendererText"/>
-                      <attributes>
-                        <attribute name="text">2</attribute>
-                      </attributes>
-                    </child>
-                  </object>
+                  <placeholder/>
                 </child>
               </object>
               <packing>

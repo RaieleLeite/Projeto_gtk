@@ -1,0 +1,12 @@
+Login: admin
+Senha: 12345678
+Horário de chegada: 26-07-2024 14:18:22
+
+Login: Raiele
+Senha: 12345
+Horário de chegada: 26-07-2024 14:19:32
+
+Login: Raiele
+Senha: 12345
+Horário de saída: 26-07-2024 14:19:45
+

@@ -16,6 +16,19 @@ GtkWidget *horario_saida;
 GtkStack  *stack;
 GtkListStore *modelodearmazenamento;
 
+void mensagem(const gchar *texto, const gchar *texto_secundario) {
+    GtkWidget *mensagem_dialogo = gtk_message_dialog_new(
+        GTK_WINDOW(window),
+        GTK_DIALOG_DESTROY_WITH_PARENT,
+        GTK_MESSAGE_INFO,
+        GTK_BUTTONS_OK,
+        "%s", texto
+    );
+    gtk_window_set_title(GTK_WINDOW(mensagem_dialogo), texto_secundario);
+    gtk_dialog_run(GTK_DIALOG(mensagem_dialogo));
+    gtk_widget_destroy(mensagem_dialogo);
+}
+
 void save_to_file_login(const gchar *login_text, const gchar *senha_text, const gchar *horario_text, const gchar *buffer) {
     FILE *pArquivo_horario = fopen("Horario_de_entrada.txt", "a");
     if (pArquivo_horario == NULL) {
@@ -47,9 +60,48 @@ void save_to_file_cadastro(const gchar *cad_nome_text, const gchar *cad_login_te
     fclose(pArquivo_usuarios);
 }
 
+bool verificar_login(const gchar *login_text, const gchar *senha_text) {
+    FILE *pArquivo_usuarios = fopen("Usuarios_registrados.txt", "r");
+    if (pArquivo_usuarios == NULL) {
+        g_print("Erro ao abrir o arquivo de usuários.\n");
+        return false;
+    }
+
+    char line[256];
+    char login[256];
+    char senha[256];
+    bool found = false;
+
+    while (fgets(line, sizeof(line), pArquivo_usuarios)) {
+        if (sscanf(line, "Login: %s", login) == 1) {
+            continue;
+        }
+        if (sscanf(line, "Senha: %s", senha) == 1) {
+            if (strcmp(login_text, login) == 0 && strcmp(senha_text, senha) == 0) {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    fclose(pArquivo_usuarios);
+    return found;
+}
+
 void login(const gchar *login_text, const gchar *senha_text) {
     if ((strcmp(login_text, "admin") == 0) && (strcmp(senha_text, "12345678") == 0)) {
         gtk_stack_set_visible_child_name(stack, "view_admin");
+        const gchar *texto = "Bem Vindo, Usuario logado com sucesso!";
+        const gchar *texto_secundario = "Login Sucesso";
+        mensagem(texto, texto_secundario);
+    } else if (verificar_login(login_text, senha_text)) {
+        const gchar *texto = "Bem Vindo, Usuario logado com sucesso!";
+        const gchar *texto_secundario = "Login Sucesso";
+        mensagem(texto, texto_secundario);
+    } else {
+        const gchar *texto = "Usuario ou senha invalidos.";
+        const gchar *texto_secundario = "Erro de Login";
+        mensagem(texto, texto_secundario);
     }
 }
 
@@ -76,6 +128,10 @@ void escrever_login() {
     // Limpar campos após o login
     gtk_entry_set_text(GTK_ENTRY(entry_login), "");
     gtk_entry_set_text(GTK_ENTRY(entry_senha), "");
+
+    // Limpar os checkboxes
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(horario_chegada), FALSE);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(horario_saida), FALSE);
 }
 
 void escrever_cad() {
@@ -117,6 +173,9 @@ void on_button_cad_voltar_clicked(GtkWidget *widget, gpointer data) {
 
 void on_button_cadastar_clicked(GtkWidget *widget, gpointer data) {
     escrever_cad();
+    const gchar *texto = "Usuario cadastrado com sucesso!";
+    const gchar *texto_secundario = "Cadastro Sucesso";
+    mensagem(texto, texto_secundario);
 }
 
 void on_button_listar_voltar_clicked(GtkWidget *widget, gpointer data) {
@@ -131,7 +190,7 @@ void on_button_listar_clicked(GtkWidget *widget, gpointer data) {
     }
 
     GtkTreeIter iter;
-    gtk_list_store_clear(modelodearmazenamento);
+    gtk_list_store_clear(modelodearmazenamento); // Limpa os itens existentes no modelo
 
     char line[256];
     while (fgets(line, sizeof(line), pArquivo_usuarios)) {
@@ -141,12 +200,14 @@ void on_button_listar_clicked(GtkWidget *widget, gpointer data) {
             line[len-1] = '\0';
         }
 
+        // Adiciona a linha ao GtkListStore
         gtk_list_store_append(modelodearmazenamento, &iter);
         gtk_list_store_set(modelodearmazenamento, &iter, 0, line, -1);
     }
 
     fclose(pArquivo_usuarios);
 }
+
 
 int main(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
@@ -170,7 +231,7 @@ int main(int argc, char *argv[]) {
     // Obtenção do objeto da janela principal e dos campos de entrada
     stack = GTK_STACK(gtk_builder_get_object(builder, "stack"));
     window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
-    modelodearmazenamento = GTK_LIST_STORE(gtk_builder_get_object(builder, "liststore1"));
+    modelodearmazenamento = GTK_LIST_STORE(gtk_builder_get_object(builder, "data"));
 
     entry_login = GTK_WIDGET(gtk_builder_get_object(builder, "entry_login"));
     entry_senha = GTK_WIDGET(gtk_builder_get_object(builder, "entry_senha"));
