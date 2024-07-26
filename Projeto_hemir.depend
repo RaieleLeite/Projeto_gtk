@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1722004577 source:c:\users\raiel\onedrive\Área de trabalho\projeto\main.c
+1722027987 source:c:\users\raiel\onedrive\Área de trabalho\projeto\main.c
 	<gtk/gtk.h>
 	<stdlib.h>
 	<stdbool.h>

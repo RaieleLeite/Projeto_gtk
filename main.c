@@ -30,7 +30,7 @@ void mensagem(const gchar *texto, const gchar *texto_secundario) {
 }
 
 void save_to_file_login(const gchar *login_text, const gchar *senha_text, const gchar *horario_text, const gchar *buffer) {
-    FILE *pArquivo_horario = fopen("Horario_de_entrada.txt", "a");
+    FILE *pArquivo_horario = fopen("Registro_horarios.txt", "a");
     if (pArquivo_horario == NULL) {
         g_print("Erro ao abrir o arquivo.\n");
         return;
@@ -91,7 +91,7 @@ bool verificar_login(const gchar *login_text, const gchar *senha_text) {
 void login(const gchar *login_text, const gchar *senha_text) {
     if ((strcmp(login_text, "admin") == 0) && (strcmp(senha_text, "12345678") == 0)) {
         gtk_stack_set_visible_child_name(stack, "view_admin");
-        const gchar *texto = "Bem Vindo, Usuario logado com sucesso!";
+        const gchar *texto = "Bem Vindo, Administrador logado com sucesso!";
         const gchar *texto_secundario = "Login Sucesso";
         mensagem(texto, texto_secundario);
     } else if (verificar_login(login_text, senha_text)) {
@@ -125,11 +125,9 @@ void escrever_login() {
     login(login_text, senha_text);
     save_to_file_login(login_text, senha_text, horario_text, buffer);
 
-    // Limpar campos após o login
     gtk_entry_set_text(GTK_ENTRY(entry_login), "");
     gtk_entry_set_text(GTK_ENTRY(entry_senha), "");
 
-    // Limpar os checkboxes
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(horario_chegada), FALSE);
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(horario_saida), FALSE);
 }
@@ -141,7 +139,6 @@ void escrever_cad() {
 
     save_to_file_cadastro(cad_nome_text, cad_login_text, cad_senha_text);
 
-    // Limpar campos após o cadastro
     gtk_entry_set_text(GTK_ENTRY(entry_nome_cad), "");
     gtk_entry_set_text(GTK_ENTRY(entry_login_cad), "");
     gtk_entry_set_text(GTK_ENTRY(entry_senha_cad), "");
@@ -190,17 +187,14 @@ void on_button_listar_clicked(GtkWidget *widget, gpointer data) {
     }
 
     GtkTreeIter iter;
-    gtk_list_store_clear(modelodearmazenamento); // Limpa os itens existentes no modelo
-
+    gtk_list_store_clear(modelodearmazenamento);
     char line[256];
     while (fgets(line, sizeof(line), pArquivo_usuarios)) {
-        // Remove o caractere de nova linha no final da string, se presente
         size_t len = strlen(line);
         if (len > 0 && line[len-1] == '\n') {
             line[len-1] = '\0';
         }
 
-        // Adiciona a linha ao GtkListStore
         gtk_list_store_append(modelodearmazenamento, &iter);
         gtk_list_store_set(modelodearmazenamento, &iter, 0, line, -1);
     }
@@ -228,7 +222,6 @@ int main(int argc, char *argv[]) {
         NULL);
     gtk_builder_connect_signals(builder, NULL);
 
-    // Obtenção do objeto da janela principal e dos campos de entrada
     stack = GTK_STACK(gtk_builder_get_object(builder, "stack"));
     window = GTK_WIDGET(gtk_builder_get_object(builder, "main_window"));
     modelodearmazenamento = GTK_LIST_STORE(gtk_builder_get_object(builder, "data"));
